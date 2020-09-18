@@ -1,0 +1,17 @@
+{
+  "name": "duris",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "doc": "index.js"
+  },
+  "dependencies": {
+    "js-yaml": "^3.14.0",
+    "safe-stable-stringify": "^1.1.1"
+  },
+  "devDependencies": {
+    "standard": "^14.3.4"
+  }
+}
