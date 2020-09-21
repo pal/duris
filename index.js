@@ -7,6 +7,11 @@ import path from 'path'
 import yaml from 'js-yaml'
 import stringify from 'safe-stable-stringify'
 
+const importValueYamlType = new yaml.Type('!ImportValue', { kind: 'scalar' })
+const refYamlType = new yaml.Type('!Ref', { kind: 'scalar' })
+const joinYamlType = new yaml.Type('!Join', { kind: 'scalar' })
+const schema = yaml.Schema.create([importValueYamlType, refYamlType, joinYamlType])
+
 console.log('duris - simple docs for serverless projects')
 
 const getAllYamlFilesFromFolder = (folder = '.', files = []) => {
@@ -67,7 +72,7 @@ if (typeof args[0] !== 'undefined') {
   const files = getAllYamlFilesFromFolder(args[0])
   files.forEach(file => {
     const fileContents = fs.readFileSync(file, 'utf8')
-    const data = yaml.safeLoad(fileContents)
+    const data = yaml.safeLoad(fileContents, { schema })
     printProject(data)
   })
   // console.log(JSON.stringify(files, null, 2))
