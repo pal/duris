@@ -12,6 +12,10 @@ const refYamlType = new yaml.Type('!Ref', { kind: 'scalar' })
 const joinYamlType = new yaml.Type('!Join', { kind: 'scalar' })
 const schema = yaml.Schema.create([importValueYamlType, refYamlType, joinYamlType])
 
+const objHasProp = (o, p) => {
+  return (typeof o !== 'undefined') && (typeof p !== 'undefined') && (o !== null) && (p !== null) && Object.prototype.hasOwnProperty.call(o, p)
+}
+
 console.log('duris - simple docs for serverless projects')
 
 const getAllYamlFilesFromFolder = (folder = '.', files = []) => {
@@ -30,7 +34,7 @@ const getAllYamlFilesFromFolder = (folder = '.', files = []) => {
 
 const printProject = (project) => {
   console.log(`== ${project.service} ==`)
-  if (Object.prototype.hasOwnProperty.call(project, 'functions')) {
+  if (objHasProp(project, 'functions')) {
     // console.log(`  * ${stringify(project.functions)}`)
     Object.keys(project.functions).forEach(func => {
       printFunction(project, func)
@@ -41,17 +45,18 @@ const printProject = (project) => {
 
 const printFunction = (project, func) => {
   const formatEvent = (evt) => {
-    if (Object.prototype.hasOwnProperty.call(evt, 'http')) {
+    if (objHasProp(evt, 'http')) {
       return `HTTP ${evt.http.path}`
     }
-    if (Object.prototype.hasOwnProperty.call(evt, 'sqs')) {
+    if (objHasProp(evt, 'sqs')) {
       return 'SQS'
     }
-    if (Object.prototype.hasOwnProperty.call(evt, 's3')) {
+    if (objHasProp(evt, 's3')) {
       return `S3 ${evt.s3.bucket}`
     }
-    if (Object.prototype.hasOwnProperty.call(evt, 'eventBridge')) {
-      if (Object.prototype.hasOwnProperty.call(evt.eventBridge, 'pattern')) {
+    if (objHasProp(evt, 'eventBridge')) {
+      // console.log(`evt == ${stringify(evt)}`)
+      if (objHasProp(evt.eventBridge, 'pattern')) {
         return `EVENTBRIDGE '${evt.eventBridge.pattern['detail-type']}'`
       }
       return 'EVENTBRIDGE'
@@ -60,7 +65,7 @@ const printFunction = (project, func) => {
   }
 
   console.log(`  * ${func}`)
-  if (Object.prototype.hasOwnProperty.call(project.functions[func], 'events')) {
+  if (objHasProp(project.functions[func], 'events')) {
     Object.keys(project.functions[func].events).forEach(evt => {
       console.log(`    - ${formatEvent(project.functions[func].events[evt])}`)
     })
